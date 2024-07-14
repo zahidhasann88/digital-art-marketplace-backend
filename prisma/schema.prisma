@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  password     String
+  name         String?
+  avatarUrl    String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  listings     Listing[]
+  purchases    Transaction[] @relation("UserPurchases")
+  transactions Transaction[] @relation("UserTransactions")
+}
+
+model Listing {
+  id           Int           @id @default(autoincrement())
+  title        String
+  description  String
+  price        Float
+  imageUrl     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  artistId     Int
+  artist       User          @relation(fields: [artistId], references: [id])
+  transactions Transaction[] @relation("ListingTransactions")
+}
+
+model Transaction {
+  id              Int      @id @default(autoincrement())
+  buyerId         Int
+  listingId       Int
+  amount          Float
+  transactionHash String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  buyer           User     @relation("UserPurchases", fields: [buyerId], references: [id], map: "Transaction_buyerId_UserPurchases_fkey")
+  listing         Listing  @relation("ListingTransactions", fields: [listingId], references: [id])
+  user            User     @relation("UserTransactions", fields: [buyerId], references: [id], map: "Transaction_buyerId_UserTransactions_fkey")
+}
