@@ -43,7 +43,22 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+
+# Create a PostgreSQL database:
+$ createdb p2p-art
+
+# Run the Prisma migrations to set up the database schema:
+$ npx prisma migrate dev --name init
 ```
+
+## Update the `.env` file with your database connection details:
+
+    ```dotenv
+    DATABASE_URL="postgresql://username:yourpassword@localhost:PORT/p2p-art?schema=public"
+    INFURA_URL=https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID
+    PRIVATE_KEY=your_private_key
+    JWT_SECRET=your_jwt_secret
+    ```
 
 ## Test
 
